@@ -1,5 +1,7 @@
 # Zwei Rangfolgen vergleichen: Kendall, Footrule und die Spitze – Streamlit-Demo
 
+**[→ Demo live ausprobieren](https://sebastianhanisch-rangdistanz-demo.streamlit.app/)**
+
 Zweites Stück der **Ranking-Linie** (Konzepte-Demo), Nachfolger von `siegtabelle-demo`: Die Wurzel hat τ und „Platz des Stärksten“ benutzt, ohne zu
 sagen, was sie messen. Dieses Stück ordnet das Vokabular für den **Abstand zweier Rangfolgen**, das alle weiteren Stücke verwenden. Es ist ein
 Rangvergleichs-Labor mit live berechneten Maßen und vier Experimenten an Tabellen aus dem Turnier der Wurzel. Alles ist simuliert.
@@ -115,4 +117,4 @@ Gebaut mit Streamlit, Plotly, numpy, pandas und fpdf2.
 
 ---
 
-Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zu den Demos: [Interaktive Demos](https://sebastianhanisch.net/demos.html).
+Diese Demo ist Teil des Portfolios von [Sebastian Hanisch](https://sebastianhanisch.net) – Operations Research und Machine Learning ([Über mich](https://sebastianhanisch.net/ueber-mich.html)). Mehr zur Reihe: [Ranking: von der Siegtabelle bis Learning to Rank](https://sebastianhanisch.net/konzepte-ranking.html).
