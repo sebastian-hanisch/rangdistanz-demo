@@ -19,8 +19,9 @@ beantwortet eine andere Frage, und zwei Tabellen können für das eine Maß glei
   untere Hälfte, zufällige Nachbartausche oder die Tabelle nach Siegen eines simulierten Turniers (Generator der Wurzel, Version 1, wortgleich).
 - **Maße:** Kendall-Distanz K und -τ, Spearman-Footrule F, Spearman-ρ, RBO (Fassung der Demo: abgeschnitten bei Tiefe n, auf [0, 1] normiert),
   Top-k-Überlappung. Alle Formeln stehen im 📐-Expander der App.
-- **Skalen:** Die Prozentwerte der Demo haben alle dieselbe Spannweite (0 bis 100 %), aber verschiedene Skalen; ein Vergleich der Zahlenwerte über
-  Maße hinweg ist nicht sinnvoll, nur die Reihenfolge von Kandidaten.
+- **Skalen:** Kendall, Footrule und Top-k reichen von 0 bis 100 %; der RBO-Abstand erreicht in dieser Fassung 100 % nicht (n = 12, p = 0,9:
+  höchstens 77 %, bei der vollständigen Umkehr). Die Skalen sind verschieden; ein Vergleich der Zahlenwerte über Maße hinweg ist nicht sinnvoll, nur
+  die Reihenfolge von Kandidaten.
 
 ## Methodik
 
@@ -33,10 +34,10 @@ beantwortet eine andere Frage, und zwei Tabellen können für das eine Maß glei
 
 | Frage | Befund | Test |
 |---|---|---|
-| Ein Tausch zweier Nachbarn bei 12 Teilnehmern: was sagen die Maße? | **Alle 11 Tausche haben Kendall-Distanz 1 und Footrule 2.** Der RBO-Abstand (p = 0,9) reicht von 0,139 (Plätze 1 und 2) bis 0,004 (Plätze 11 und 12): das 32-Fache. Die Top-3-Überlappung bemerkt nur den Tausch über die Grenze 3 \| 4 (0,67). | `test_every_adjacent_swap_has_kendall_one_and_footrule_two`, `test_rbo_distance_of_the_top_and_bottom_swap_and_their_ratio`, `test_top3_overlap_notices_only_the_swap_across_the_boundary` |
-| Zwei Tabellen aus demselben Turnier (Siege gegen Siegquote, Lücken): welche liegt näher an der Wahrheit? | Kendall und Footrule urteilen in 6,1 % der Fälle verschieden, Kendall und Top-3 in 14,3 %, Kendall und RBO in 19,9 % (je Paar nur Fälle ohne Gleichstand). Nach Kendall liegt die Siegquote in 70,4 % der Turniere näher, die Siegezahl in 22,4 %. | `test_disagreement_between_kendall_and_footrule_is_small_and_with_the_top_measures_larger`, `test_the_rate_table_is_closer_to_the_truth_in_most_runs` |
+| Ein Tausch zweier Nachbarn bei 12 Teilnehmern: was sagen die Maße? | **Alle 11 Tausche haben Kendall-Distanz 1 und Footrule 2.** Der RBO-Abstand (p = 0,9) reicht von 0,139 (Plätze 1 und 2) bis 0,004 (Plätze 11 und 12): das rund 32-Fache (bei n = 12 und p = 0,9; das Verhältnis hängt stark von n und p ab). Die Top-3-Überlappung bemerkt nur den Tausch über die Grenze 3 \| 4 (0,67). | `test_every_adjacent_swap_has_kendall_one_and_footrule_two`, `test_rbo_distance_of_the_top_and_bottom_swap_and_their_ratio`, `test_top3_overlap_notices_only_the_swap_across_the_boundary` |
+| Zwei Tabellen aus demselben Turnier (Siege gegen Siegquote, Lücken): welche liegt näher an der Wahrheit? | Kendall und Footrule urteilen in rund 5 % der Fälle verschieden, Kendall und Top-3 in rund 15 %, Kendall und RBO in rund 20 % (Stichprobe der 500 festen Turniere: 6,1 / 14,3 / 19,9 %; 6000 andere Seeds: 4,5 / 15,7 / 19,7 %; je Paar nur Fälle ohne Gleichstand). Nach Kendall liegt die Siegquote in etwa zwei Dritteln der Turniere näher (Stichprobe 70,4 %, andere Seeds 65,8 %), die Siegezahl in rund einem Viertel (22,4 %, andere Seeds 25,4 %). | `test_disagreement_between_kendall_and_footrule_is_small_and_with_the_top_measures_larger`, `test_the_rate_table_is_closer_to_the_truth_in_most_runs` |
 | Wie weit liegen Kendall und Footrule auseinander? | **K ≤ F ≤ 2K gilt in allen 8000 zufälligen Permutationen** (n = 4, 8, 12, 16). F/K liegt zwischen 1,09 und 2,00, im Mittel zwischen 1,42 (n = 16) und 1,77 (n = 4). Die vollständige Umkehr bei n = 12 hat K = 66 und F = 72. | `test_diaconis_graham_holds_in_all_8000_permutations`, `test_footrule_over_kendall_ranges_and_means`, `test_full_reversal_values_for_n_12` |
-| τ gegen „Platz 1 stimmt“ (vollständiges Turnier, n = 8) | Mit einer Partie je Paar ist τ = 0,54 und Platz 1 stimmt in 42,6 % der Läufe; mit 10 Partien τ = 0,88, Top-3-Überlappung 0,925, aber Platz 1 nur in 76,4 %; mit 40 Partien τ = 0,98 und 93,2 %. | `test_measures_and_first_place_against_the_number_of_games`, `test_the_first_place_lags_the_global_measures_at_ten_games` |
+| τ gegen „Platz 1 stimmt“ (vollständiges Turnier, n = 8) | Mit einer Partie je Paar ist τ = 0,54 und Platz 1 stimmt in rund 43 % der Läufe; mit 10 Partien τ = 0,88, Top-3-Überlappung 0,925, aber Platz 1 nur in 76 bis 78 %; mit 40 Partien τ = 0,98 und rund 93 % (Stichprobe: 42,6 / 76,4 / 93,2 %; der Stichprobenfehler beträgt etwa 2 Prozentpunkte). | `test_measures_and_first_place_against_the_number_of_games`, `test_the_first_place_lags_the_global_measures_at_ten_games` |
 
 ## Befunde und Korrekturen gegenüber dem Plan
 
@@ -77,7 +78,7 @@ beantwortet eine andere Frage, und zwei Tabellen können für das eine Maß glei
 
 ## Tests
 
-91 Tests, rund 20 Sekunden: Einheiten gegen die von Hand gerechnete Mini-Instanz (`test_measures.py`, `test_perturb.py`), Generator
+132 Tests, rund 90 Sekunden: Einheiten gegen die von Hand gerechnete Mini-Instanz (`test_measures.py`, `test_perturb.py`), Generator
 (`test_generator.py`, wortgleich mit der Wurzel), **Orakel** (`test_oracle_rangdistanz.py`: Kendall gegen `scipy` und Aufzählung, Footrule gegen den
 Inversen-Weg und die Umkehr als Höchstwert, ρ gegen `scipy`, Diaconis-Graham erschöpfend für n = 4, RBO gegen exakte Bruchrechnung, Dreiecks-
 ungleichung, Paritätsinvariante), Presets, ausblendbare Regler (`test_hidden_widget_state.py`), Analyse und Verdikte (`test_evaluation.py`), alle Zahlen

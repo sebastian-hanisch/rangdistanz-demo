@@ -162,7 +162,7 @@ c2.metric("Footrule: Abstand", f"{ev.pct(dist['Footrule'])} %", delta=f"F = {a.v
 c3.metric("RBO: Abstand", f"{ev.pct(dist['RBO'])} %", delta=f"p = {ev.de(settings.rbo_p)}", delta_color="off", help="1 minus rangbiasierte Überlappung.")
 c4.metric(f"Top-{settings.topk}: Abstand", f"{ev.pct(dist['Top-k'])} %", delta=f"Überlappung {ev.de(a.values['topk'])}", delta_color="off",
           help="1 minus Anteil gemeinsamer Teilnehmer unter den ersten k.")
-st.caption("Die Prozentwerte haben dieselbe Spannweite (0 bis 100 %), aber verschiedene Skalen: 20 % bei einem Maß heißt nicht dasselbe wie 20 % bei einem anderen.")
+st.caption("Kendall, Footrule und Top-k reichen von 0 bis 100 %, der RBO-Abstand erreicht in dieser Fassung 100 % nicht. Die Skalen sind verschieden: 20 % bei einem Maß heißt nicht dasselbe wie 20 % bei einem anderen.")
 st.download_button("📄 PDF des aktuellen Vergleichs", data=build_pdf(a), file_name="rangvergleich.pdf", mime="application/pdf", key="pdf_download")
 
 # --- Kernfrage -----------------------------------------------------------------------------------------------------------------------------
@@ -215,7 +215,7 @@ st.markdown(
 | Annahme | Was passiert, wenn sie verletzt ist | Wer setzt an |
 |---|---|---|
 | **Beide Rangfolgen enthalten dieselben Teilnehmer** | Teillisten (Top-k mit verschiedenen Elementen) und Gleichstände brauchen eigene Varianten der Maße; die Demo rechnet nur mit vollständigen Rangfolgen. | – |
-| **Ein Maß genügt** | Kendall, Footrule und die Überlappung der Spitze urteilen in 6 bis 20 % der Tabellenpaare verschieden (Experiment 2). Die Wahl entscheidet. | – |
+| **Ein Maß genügt** | Kendall, Footrule und die Überlappung der Spitze urteilen in etwa 5 bis 20 % der Tabellenpaare verschieden (Experiment 2, bei p = 0,9 und k = 3). Die Wahl entscheidet. | – |
 | **Der Parameter ist unkritisch** | Das Urteil von RBO und Top-k hängt von p bzw. k ab; die Experimente rechnen mit p = 0,9 und k = 3, nicht über alle Werte. | – |
 | **Die Rangfolgen kommen aus einem Turnier** | Alles ist simuliert (Generator der Wurzel); die „wahre Ordnung“ ist eine Konstruktion, kein Messwert. | – |
 | **Eine Rangfolge ist das Ziel** | Aus mehreren Rangfolgen eine zu machen (und was dabei „nah“ heißt) ist eine eigene Aufgabe. | Borda, Copeland, Kemeny |

@@ -141,7 +141,7 @@ def verdict_adjacent(rows) -> tuple[str, str]:
     crossing = [r["i"] for r in rows if r["topk"] < 1.0]
     return "warning", (f"Alle {n - 1} Nachbartausche haben dieselbe Kendall-Distanz ({', '.join(map(str, sorted(ks)))}) und dieselbe Footrule "
                        f"({', '.join(map(str, sorted(fs)))}). Der Abstand 1 − RBO reicht von {de(lo['rbo_dist'], 3)} (Plätze {lo['i']} und {lo['i'] + 1}) "
-                       f"bis {de(hi['rbo_dist'], 3)} (Plätze {hi['i']} und {hi['i'] + 1}): das {ratio:.0f}-Fache. Die Top-k-Überlappung bemerkt nur "
+                       f"bis {de(hi['rbo_dist'], 3)} (Plätze {hi['i']} und {hi['i'] + 1}): das {ratio:.0f}-Fache (bei {n} Teilnehmern; das Verhältnis hängt stark von n und vom RBO-Parameter ab). Die Top-k-Überlappung bemerkt nur "
                        f"{'den Tausch über die Grenze ' + str(crossing[0]) + ' | ' + str(crossing[0] + 1) if len(crossing) == 1 else 'die Tausche über ihre Grenze'}.")
 
 

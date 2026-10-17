@@ -53,7 +53,7 @@ PRESETS = {
 PRESET_HELP = {
     "Tausch oben": "Plätze 1 und 2 tauschen: Kendall-Distanz 1 und Footrule 2, aber ein deutlicher Abstand für die rangbiasierte Überlappung.",
     "Tausch unten": "Plätze 11 und 12 tauschen: dieselbe Kendall-Distanz und Footrule, aber kaum ein Unterschied für die rangbiasierte Überlappung.",
-    "Person rutscht ab": "Der Beste fällt um fünf Plätze: Kendall-Distanz 5, Footrule 10, die Überlappung der Spitze bricht ein.",
+    "Person rutscht ab": "Der Beste fällt um fünf Plätze: Kendall-Distanz 5, Footrule 10, die Überlappung der Spitze sinkt auf zwei Drittel.",
     "Untere Hälfte": "Die Plätze 7 bis 12 stehen verkehrt herum: viele Paare falsch, die Spitze aber unberührt.",
     "Aus einem Turnier": "Wahre Ordnung gegen die Tabelle nach Siegen eines simulierten Turniers (4 Partien je Paar, Generator der Wurzel).",
 }
