@@ -20,11 +20,17 @@ Q5  Wikipedia, "Spearman's rank correlation coefficient" (https://en.wikipedia.o
     über WebFetch eingesehen, Beispiel IQ gegen Fernsehstunden): IQ 106,100,86,101,99,103,97,113,112,110 und Stunden
     7,27,2,50,28,29,20,12,6,17; Σd² = 194, n = 10, ρ = -29/165 ≈ -0,1758. Rangtabelle von Hand nachgerechnet (stimmt).
 
-Nicht eingesehen und deshalb ohne Test: Webber, Moffat, Zobel (2010) zum RBO (nur die Autorenseite, kein Volltext erreichbar),
-Kendall (1938), Spearman (1904), Diaconis, Graham (1977) im Original.
+Q6  Webber, W., Moffat, A., Zobel, J. (2010): A similarity measure for indefinite rankings. ACM TOIS 28 (4), Autorenfassung (PDF-Volltext,
+    codalism.com/research/papers/wmz10_tois.pdf, gelesen am 2026-10-17). Abschnitt 4.1: Gl. (3) Agreement A_d = X_d/d, Gl. (7) RBO = (1-p) Σ p^(d-1) A_d;
+    Abschnitt 4.2: Gl. (11) RBO_MIN, Gl. (13)-(18) Rest RBO_RES; Abschnitt 4.3: Gl. (21) Gewicht der ersten d Ränge, "p = 0.9 means that the first 10
+    ranks have 86% of the weight"; Abschnitt 4.4: Basiswert 0,767 bei 7 identischen Ergebnissen und p = 0,9, Gl. (23) RBO_EXT.
+
+Nicht eingesehen und deshalb ohne Test: Kendall (1938), Spearman (1904), Diaconis, Graham (1977) im Original.
 """
 
 import itertools
+import math
+import random
 from fractions import Fraction
 
 import pytest
@@ -146,3 +152,79 @@ def test_spearman_rho_of_the_iq_television_example_from_wikipedia():
     assert sum((pos_iq[p] - pos_tv[p]) ** 2 for p in people) == 194
     # dieselbe Korrelation, wenn beide Rangfolgen absteigend gebildet werden
     assert M.spearman_rho(tuple(reversed(by_iq)), tuple(reversed(by_tv))) == pytest.approx(-29 / 165)
+
+
+# --- Q6: Webber, Moffat, Zobel (2010), RBO --------------------------------------------------------------------------------------------
+
+def _rbo_min(X, p):
+    """Gl. (11): RBO_MIN(S,T,p,k) = (1-p)/p * ( Σ_{d=1}^k (X_d - X_k) p^d / d  -  X_k ln(1-p) ); X_d = Überlappung bis Tiefe d."""
+    k, Xk = len(X), X[-1]
+    return (1 - p) / p * (sum((X[d - 1] - Xk) * p ** d / d for d in range(1, k + 1)) - Xk * math.log(1 - p))
+
+
+def _rbo_res(X, p, tail=5000):
+    """Gl. (13): Rest RBO_RES = (1-p) ( Σ_{d=k+1}^f 2(d-k)/d p^(d-1) + Σ_{d>f} (1 - X_k/d) p^(d-1) ), f = 2k - X_k (Summe bei `tail` abgebrochen)."""
+    k, Xk = len(X), X[-1]
+    f = 2 * k - Xk
+    head = sum(2 * (d - k) / d * p ** (d - 1) for d in range(k + 1, f + 1))
+    rest = sum((1 - Xk / d) * p ** (d - 1) for d in range(f + 1, tail))
+    return (1 - p) * (head + rest)
+
+
+def _rbo_ext(X, p):
+    """Gl. (23): RBO_EXT = X_k/k p^k + (1-p)/p Σ_{d=1}^k (X_d/d) p^d."""
+    k = len(X)
+    return X[-1] / k * p ** k + (1 - p) / p * sum(X[d - 1] / d * p ** d for d in range(1, k + 1))
+
+
+def _overlaps(a, b):
+    return [len(set(a[:d]) & set(b[:d])) for d in range(1, len(a) + 1)]
+
+
+def test_webber_moffat_zobel_numbers_for_the_prefix_bounds_and_rank_weights():
+    """Q6, Abschnitt 4.2 bis 4.4 (Autorenfassung, PDF-Volltext von codalism.com/research/papers/wmz10_tois.pdf, Einsicht 2026-10-17):
+    - Zehn Ergebnisse, p = 0,9: größter Rest 0,254 (Spanne 0,000 bis 0,254, präfixfremd), kleinster Rest 0,144 (Spanne 0,856 bis 1,000, gleiche Präfixe).
+    - Zwei Suchmaschinen mit je 7 identischen Ergebnissen, p = 0,9: Basiswert (RBO_MIN) nur 0,767.
+    - p = 0,9: die ersten 10 Ränge haben 86 % des Gewichts (Gl. 21); für die ersten 50 Ränge etwa dasselbe Gewicht braucht p = 0,98."""
+    p = 0.9
+    ident10 = list(range(1, 11))
+    assert _rbo_min(ident10, p) == pytest.approx(0.856, abs=5e-4)
+    assert _rbo_res(ident10, p) == pytest.approx(0.144, abs=5e-4)
+    assert _rbo_min(ident10, p) + _rbo_res(ident10, p) == pytest.approx(1.0, abs=1e-9)
+    disjoint10 = [0] * 10
+    assert _rbo_min(disjoint10, p) == pytest.approx(0.0, abs=1e-12)
+    assert _rbo_res(disjoint10, p) == pytest.approx(0.254, abs=5e-4)
+    assert _rbo_min(list(range(1, 8)), p) == pytest.approx(0.767, abs=5e-4)
+
+    def weight_of_prefix(d, q):                                  # Gl. (21)
+        return 1 - q ** (d - 1) + (1 - q) / q * d * (math.log(1 / (1 - q)) - sum(q ** i / i for i in range(1, d)))
+
+    assert weight_of_prefix(10, 0.9) == pytest.approx(0.86, abs=5e-3)
+    assert weight_of_prefix(50, 0.98) == pytest.approx(0.86, abs=0.01)
+    # das Gewicht der ersten d Ränge ist die Summe der Rangegewichte Gl. (19): (1-p)/p Σ_{i>=j} p^i / i
+    q = 0.9
+    ranks = [(1 - q) / q * sum(q ** i / i for i in range(j, 3000)) for j in range(1, 11)]
+    assert sum(ranks) == pytest.approx(weight_of_prefix(10, q), abs=1e-9)
+
+
+@pytest.mark.parametrize("p", [0.5, 0.8, 0.9, 0.95])
+def test_demo_rbo_is_the_prefix_score_of_equation_7_divided_by_one_minus_p_to_the_n_and_respects_the_paper_bounds(p):
+    """Q6, Gl. (7): RBO = (1-p) Σ p^(d-1) A_d mit A_d = X_d/d. Die Demo rechnet die Summe nur bis zur Tiefe n und teilt durch Σ_{d<=n} p^(d-1);
+    das ist der Präfixwert RBO@n der Quelle geteilt durch (1-p) Σ_{d<=n} p^(d-1) = 1 - p^n, also eine eigene Normierung, keine der Quelle.
+    Die Quelle sagt außerdem: RBO@k < RBO_MIN <= RBO_EXT <= RBO_MAX (Abschnitt 4.2 und 4.4)."""
+    n = 10
+    ref = tuple(range(n))
+    r = random.Random(11)
+    checked = 0
+    for _ in range(40):
+        other = list(range(n))
+        r.shuffle(other)
+        X = _overlaps(ref, other)
+        prefix = (1 - p) * sum(p ** (d - 1) * X[d - 1] / d for d in range(1, n + 1))
+        assert M.rbo(ref, tuple(other), p) * (1 - p ** n) == pytest.approx(prefix, abs=1e-12)
+        lo = _rbo_min(X, p)
+        assert prefix <= lo + 1e-12
+        assert lo <= _rbo_ext(X, p) + 1e-12 <= lo + _rbo_res(X, p) + 1e-9
+        checked += 1
+    assert checked == 40
+    assert M.rbo(ref, ref, p) == pytest.approx(1.0, abs=1e-12)

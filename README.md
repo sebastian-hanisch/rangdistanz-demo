@@ -70,8 +70,8 @@ beantwortet eine andere Frage, und zwei Tabellen können für das eine Maß glei
 - Spearman, C. (1904): The proof and measurement of association between two things. *The American Journal of Psychology* 15, 72–101.
 - Diaconis, P., Graham, R. L. (1977): Spearman's footrule as a measure of disarray. *Journal of the Royal Statistical Society, Series B* 39 (2), 262–268.
 - Webber, W., Moffat, A., Zobel, J. (2010): A similarity measure for indefinite rankings. *ACM Transactions on Information Systems* 28 (4), 20:1–20:38.
-  Zitat und Parameter nach der gängigen Darstellung; **das Original (ACM) wurde nicht eingesehen**, die Fassung der Demo ist als eigene
-  Definition gekennzeichnet.
+  Eingesehen 2026-10-17 (Autorenfassung, Volltext): Gl. (3) und (7) in Abschnitt 4.1, Gewicht der obersten Ränge in Abschnitt 4.3; die Fassung der
+  Demo (abgeschnitten bei Tiefe n, normiert) ist als eigene Definition gekennzeichnet.
 - Steele, G. L., Lea, D., Flood, C. H. (2014): Fast splittable pseudorandom number generators. *OOPSLA 2014*, 453–472. Konstanten nach Vigna,
   `splitmix64.c` (prng.di.unimi.it).
 
